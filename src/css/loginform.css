@@ -1,0 +1,51 @@
+#form-register-link{
+    float:left;
+    margin-left:10px !important;
+}
+#form-forget-link{
+    float:right;
+    margin-right:10px;
+}
+#form-button{
+    width:80%;
+    left:50%;
+    transform: translateX(-50%);
+    background: #282c34;
+}
+
+#login-form{
+    width:100%;
+    /*background-color: darkgreen;*/
+    flex-grow:3;
+    padding-left:30px;
+    padding-right:30px;
+}
+
+#login-form-wrapper{
+    box-sizing: border-box;
+    width:500px;
+    height:400px;
+    /*background-color: #61dafb;*/
+    display: flex;
+    flex-direction: column;
+    border:1px solid #ccc;
+    background-color: white;
+    padding: 20px;
+    border-radius: 10px;
+}
+
+#login-form-title{
+    width:100%;
+    /*background-color: #282c34;*/
+    flex-grow:2;
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+}
+
+#login-form-divider{
+    flex-grow:0;
+}
+#login-form-title-text{
+    font-size:40px;
+}
