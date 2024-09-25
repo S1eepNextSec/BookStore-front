@@ -17,8 +17,17 @@ export async function login(account,password){
     }
 }
 
-export function logout(){
-    getRequest(BACK_END_URL.LOG_OUT);
+export async function logout(){
+    // getRequest(BACK_END_URL.LOG_OUT);
+    try{
+        const logoutJson = await getRequest(BACK_END_URL.LOG_OUT);
+
+        return logoutJson.data;
+    } catch(e){
+        return {
+            duration:"0小时0分钟0秒",
+        }
+    }
 }
 
 export async function register(user_info){

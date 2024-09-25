@@ -1,5 +1,5 @@
 import React, {useContext, useEffect, useState} from 'react';
-import {Button, Dropdown, Flex, Layout, Menu} from 'antd';
+import {Button, Dropdown, Flex, Layout, Menu, message} from 'antd';
 import {Content, Footer, Header} from "antd/lib/layout/layout";
 import Sider from "antd/lib/layout/Sider";
 import '../css/layout.css'
@@ -22,6 +22,7 @@ import {redirect} from "react-router";
 import {authenticate} from "../service/common";
 import {getUserInfo} from "../service/user";
 import {logout} from "../service/login";
+import async from "async";
 
 /**
  * BasicLayout
@@ -39,6 +40,7 @@ export default function BasicLayout({children,defaultKey}){
     const [auth,setAuth] = useState(false);
     const [user,setUser] = useState(null);
     const [isAdmin,setIsAdmin] = useState(false);
+    const [messageAPI,contextHolder]=message.useMessage();
 
     /**
      * 导航栏中条目的对象数组
@@ -115,10 +117,15 @@ export default function BasicLayout({children,defaultKey}){
             key:"logout",
             label:"登出",
             icon:<LogoutOutlined/>,
-            onClick:()=>{
-                logout();
+            onClick:async()=> {
+                const logoutInfo = await logout();
 
-                navi("/login")
+                const onlineDurationStr = logoutInfo.duration;
+
+                messageAPI.open({type: 'success', content: '登出成功,在线时常' + onlineDurationStr, duration: 1})
+
+                setTimeout(()=>{navi("/login")},1000)
+                // navi("/login")
             },
             danger:"true"
         },
@@ -152,6 +159,7 @@ export default function BasicLayout({children,defaultKey}){
 
     return (
         <UserContext.Provider value={{user,setUser}}>
+            {contextHolder}
             <Layout id={"layout-wrapper"}>
                 <Header id={"layout-header"}>
                     <Flex>
