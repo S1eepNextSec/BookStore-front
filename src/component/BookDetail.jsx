@@ -70,7 +70,7 @@ export default function BookDetail(){
         const OrderCreateResponse = await createNewOrder(orderInfo);
 
         if (OrderCreateResponse.status ==="success"){
-            messageAPI.open({type:"success",content:"下单成功"});
+            messageAPI.open({type:"success",content:"订单处理中"});
         }
         else {
             messageAPI.open({type:"error",content:OrderCreateResponse.msg});

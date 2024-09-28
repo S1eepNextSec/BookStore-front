@@ -189,7 +189,7 @@ export function CartTable(){
         const OrderCreateResponse = await createNewOrder(orderInfo);
 
         if (OrderCreateResponse.status === "success"){
-            messageAPI.open({type:"success",content:"下单成功"});
+            messageAPI.open({type:"success",content:"订单处理中"});
             const cartItemIdList = selectedCartItems.map((item)=>item.cartItem_id);
 
             const isDeleteSuccess = await deleteCartItemsBatch(cartItemIdList);
