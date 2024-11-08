@@ -23,6 +23,7 @@ import {authenticate} from "../service/common";
 import {getUserInfo} from "../service/user";
 import {logout} from "../service/login";
 import async from "async";
+import {useWebSocket, WebSocketLayer} from "./WebSocketContext";
 
 /**
  * BasicLayout
@@ -41,6 +42,7 @@ export default function BasicLayout({children,defaultKey}){
     const [user,setUser] = useState(null);
     const [isAdmin,setIsAdmin] = useState(false);
     const [messageAPI,contextHolder]=message.useMessage();
+    const {socket,connect,isConnected,disconnect} = useWebSocket();
 
     /**
      * 导航栏中条目的对象数组
@@ -120,6 +122,8 @@ export default function BasicLayout({children,defaultKey}){
             onClick:async()=> {
                 const logoutInfo = await logout();
 
+                disconnect();
+
                 const onlineDurationStr = logoutInfo.duration;
 
                 messageAPI.open({type: 'success', content: '登出成功,在线时常' + onlineDurationStr, duration: 1})
@@ -143,10 +147,13 @@ export default function BasicLayout({children,defaultKey}){
             if (isAdminAuthInNeed && !userInfo.isAdmin) {
                 navi("/books")
             }
+
             setAuth(true)
             setUser(userInfo);
             setIsAdmin(userInfo.isAdmin)
             console.log(userInfo)
+
+            connect(userInfo.id);
         }
     }
 

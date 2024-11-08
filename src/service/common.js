@@ -13,6 +13,7 @@ export async function getRequest(url, data)
         headers:{
             'Content-Type':'application/json',
             // ...(token && {'Authorization':`${token}`}),
+            'Access-Control-Allow-Origin':'*'
         },
         mode:"cors",
         credentials:"include",
@@ -37,6 +38,7 @@ export async function deleteRequest(url, data)
         headers:{
             'Content-Type':'application/json',
             // ...(token && {'Authorization':`${token}`}),
+            // 'Access-Control-Allow-Origin':'*'
         },
         mode:"cors",
         credentials:"include",
@@ -59,6 +61,7 @@ export async function putRequest(url, data)
         headers:{
             'Content-Type':'application/json',
             // ...(token && {'Authorization':`${token}`}),
+            // 'Access-Control-Allow-Origin':'*'
         },
         body:JSON.stringify(data),
         mode:"cors",
@@ -81,6 +84,7 @@ export async function postRequest(url, data)
         headers:{
             'Content-Type':'application/json',
             // ...(token && {'Authorization':`${token}`}),
+            // 'Access-Control-Allow-Origin':'*'
         },
         body:JSON.stringify(data),
         mode:"cors",
@@ -102,6 +106,7 @@ export async function authenticate()
         headers:{
             'Content-Type':'application/json',
             // ...(token && {'Authorization':`${token}`}),
+            // 'Access-Control-Allow-Origin':'*'
         },
         mode:"cors",
         credentials:"include",

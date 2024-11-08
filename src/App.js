@@ -16,11 +16,12 @@ import UserPage from "./pages/UserPage";
 import ErrorPage from "./pages/ErrorPage";
 import AppRouter from "./router/Router";
 import {ConfigProvider} from "antd";
+import {WebSocketProvider} from "./component/WebSocketContext";
 function App() {
-  const theme={
-  }
   return (
+      <WebSocketProvider>
         <AppRouter/>
+      </WebSocketProvider>
   );
 }
 

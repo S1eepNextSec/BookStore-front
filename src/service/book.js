@@ -102,3 +102,13 @@ export async function createBook(book){
         return false;
     }
 }
+
+export async function searchAuthorByBookName(book){
+    try{
+        const response = await getRequest(BACK_END_URL.SEARCH_AUTHOR,{book:book});
+
+        return response;
+    }catch(e){
+        return [];
+    }
+}

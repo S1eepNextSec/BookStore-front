@@ -146,6 +146,9 @@ export default function BookManageTable()
 
     const handleSumbitRevise=async()=>{
         console.log(editingBook);
+        // 补充上sale以及isDeleted字段
+        let editingBookSale = books.find((item)=>item.id === editingBook.id).sale;
+        let editingBookCopy = {...editingBook,sale:editingBookSale,isDeleted:false};
         const isOk = await updateBook(editingBook);
 
         if (isOk){

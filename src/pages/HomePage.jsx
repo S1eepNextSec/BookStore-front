@@ -1,15 +1,15 @@
 import LoginForm from "../component/LoginForm";
 import BasicLayout from "../component/BasicLayout";
 import Search from "antd/es/input/Search";
-import {Button, Col, Flex, List, Pagination, Row} from "antd";
+import {Button, Card, Col, Flex, List, Modal, Pagination, Row, Skeleton} from "antd";
 import BookCard from "../component/BookCard";
 import p from "../img/尾随者.jpg"
 import "../css/homepage.css"
 import {book as book} from "../utils/fakeData";
-import { useEffect, useState} from "react";
+import React, { useEffect, useState} from "react";
 import {UserContext} from "../component/UserContext";
 import {getRequest} from "../service/common";
-import {getBookById, getBookFilteredByTitle, getBooksPageable} from "../service/book";
+import {getBookById, getBookFilteredByTitle, getBooksPageable, searchAuthorByBookName} from "../service/book";
 import {BACK_END_URL} from "../utils/backend_url";
 import {ArrowLeftOutlined, CheckOutlined, LeftOutlined, RedoOutlined} from "@ant-design/icons";
 
@@ -26,6 +26,8 @@ export default function HomePage(){
     const [totalBooks,setTotalBooks] = useState(0);
     const [isFiltering,setIsFiltering] = useState(false);
     const [searchKeyWord,setSearchKeyWord] = useState("");
+    const [isAuthorSearching,setIsAuthorSearching] = useState(false);
+    const [authorSearchResult,setAuthorSearchResult] = useState([]);
 
     const getBooks = async (page_index,num)=>{
         let data =await getBooksPageable(pageIndex,element_num);
@@ -55,6 +57,19 @@ export default function HomePage(){
         setPageIndex(0);
     }
 
+    const showAuthorSearchModal = ()=>{
+        setIsAuthorSearching(true);
+    }
+    const closeAuthorSearchModal = ()=>{
+        setIsAuthorSearching(false);
+        setAuthorSearchResult([])
+    }
+
+    const searchAuthor = async (value)=>{
+        let searchResult = await searchAuthorByBookName(value);
+
+        setAuthorSearchResult(searchResult);
+    }
 
     useEffect(()=>{
         if (isFiltering){
@@ -92,6 +107,14 @@ export default function HomePage(){
                                     doStartFilter(value);
                             }}
                         />
+                        <Button
+                            style={{height:"40px",fontSize:"16px"}}
+                            onClick={()=>{
+                                showAuthorSearchModal();
+                            }}
+                        >
+                            查询作者
+                        </Button>
                     </Flex>
                 </Col>
             </Row>
@@ -125,6 +148,43 @@ export default function HomePage(){
                     }}
                 />
             </Flex>
+            <Modal
+                open={isAuthorSearching}
+                onCancel={()=>{closeAuthorSearchModal()}}
+                // onOk={()=>searchAuthor()}
+                footer={null}
+                // okText={"查询"}
+                // cancelText={"取消"}
+                width={1000}
+                title={"查询作者"}
+            >
+                <Flex justify={"left"}>
+                    <Search
+                        placeholder={"作者名称"}
+                        allowClear
+                        enterButton={"查找"}
+                        onSearch={(value)=>{
+                            if (value !=="")
+                                searchAuthor(value);
+                        }}
+                        size="large"/>
+                </Flex>
+                <List
+                    //分页
+                    pagination={{
+                        total:authorSearchResult.length,
+                        pageSize:4,
+                        hideOnSinglePage:true
+                    }}
+                    dataSource={authorSearchResult}
+                    renderItem={(item)=>(
+                        <Flex>
+                            <span>
+                                [{item.isbn}]《{item.title}》 - {item.author}
+                            </span>
+                        </Flex>
+                    )}/>
+            </Modal>
         </BasicLayout>
     );
 }
