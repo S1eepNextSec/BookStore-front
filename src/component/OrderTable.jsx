@@ -8,6 +8,7 @@ import { DatePicker} from 'antd';
 import {UserContext} from "./UserContext";
 import {filterOrderByBookTitle, filterOrderByTime, searchOrder} from "../service/order";
 import Search from "antd/es/input/Search";
+import {getBookByIds} from "../service/book";
 
 const {RangePicker } = DatePicker;
 /**
@@ -104,7 +105,10 @@ export default function OrderTable(){
             <Table
                 expandable={{//设置展开的信息
                     expandedRowRender:(record)=> {
-                        return getOrderDetail(record.order_items)
+                        // return getOrderDetail(record.order_items)
+                        return (
+                            <OrderDetailEntry booklist={record.order_items}/>
+                        )
                     }
                 }}
 
@@ -168,6 +172,14 @@ export default function OrderTable(){
  * @returns {Element}
  */
 const getOrderDetail = (booklist)=>{
+    //查询bookContent
+    // const bookIdList = booklist.map((item)=>item.book_id);
+
+    // const bookContents = await getBookByIds(bookIdList);
+
+    // console.log(bookContents)
+    console.log(booklist)
+
     return (
         <>
             <List
@@ -194,4 +206,56 @@ const getOrderDetail = (booklist)=>{
         </>
     )
 
+}
+
+export const OrderDetailEntry =({booklist})=>{
+    const [bookList,setBookList] = useState([]);
+
+    const getBookContents = async()=>{
+        const bookIdList = booklist.map((item)=>item.book_id);
+        const bookContents = await getBookByIds(bookIdList);
+
+        // booklist中设置cover
+        booklist.forEach((item)=>{
+            bookContents.forEach((content)=>{
+                if (content.id === item.book_id){
+                    item.cover = content.cover;
+                }
+            })
+        })
+
+        setBookList(booklist)
+    }
+
+    useEffect(() => {
+        console.log(booklist)
+
+        getBookContents();
+    }, []);
+
+    return (
+        <>
+            <List
+                dataSource={bookList}
+                renderItem={(item)=>{
+                    return (
+                        <List.Item>
+                            <Image src={item.cover} width={120}/>
+
+                            <Divider type={"vertical"}/>
+
+                            <List.Item.Meta
+                                title={<h2>{item.title}</h2>}
+                                description={"数量:"+item.quantity}
+                            />
+
+                        </List.Item>
+                    )
+                }}
+            >
+
+
+            </List>
+        </>
+    )
 }

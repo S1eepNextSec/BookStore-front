@@ -6,6 +6,7 @@ import {UserContext} from "./UserContext";
 import {filterOrderByBookTitle, filterOrderByTime, searchOrder} from "../service/order";
 import {CloseOutlined} from "@ant-design/icons";
 import {getOrderInfoInAdminModeByTime, getOrderInfoInAdminModeByTitle,getOrderInfoInAdminMode} from "../service/manage";
+import {OrderDetailEntry} from "./OrderTable";
 
 const {RangePicker } = DatePicker;
 export default function OrderManageTable()
@@ -117,7 +118,10 @@ export default function OrderManageTable()
             <Table
                 expandable={{//设置展开的信息
                     expandedRowRender:(record)=> {
-                        return getOrderDetail(record.order_items)
+                        // return getOrderDetail(record.order_items)
+                        return (
+                            <OrderDetailEntry booklist={record.order_items}/>
+                        )
                     }
                 }}
 
@@ -184,6 +188,7 @@ export default function OrderManageTable()
 }
 
 const getOrderDetail = (booklist)=>{
+    console.log(booklist)
     return (
         <>
             <List

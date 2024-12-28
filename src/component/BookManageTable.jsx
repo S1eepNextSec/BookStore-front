@@ -429,7 +429,7 @@ export default function BookManageTable()
                         className="avatar-uploader"
                         showUploadList={false}
                         maxCount={1}
-                        action="http://localhost:8080/image/upload"
+                        action="http://localhost:9000/image/upload"
                         onChange={handleUploadChange}
                     >
                         {editingBook?
@@ -572,7 +572,7 @@ export default function BookManageTable()
                             className="avatar-uploader"
                             showUploadList={false}
                             maxCount={1}
-                            action="http://localhost:8080/image/upload"
+                            action="http://localhost:9000/image/upload"
                             onChange={handleUploadChangeForCreating}
                         >
                             {creatingBook&&creatingBook.cover!=""?

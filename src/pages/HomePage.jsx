@@ -1,7 +1,7 @@
 import LoginForm from "../component/LoginForm";
 import BasicLayout from "../component/BasicLayout";
 import Search from "antd/es/input/Search";
-import {Button, Card, Col, Flex, List, Modal, Pagination, Row, Skeleton} from "antd";
+import {Button, Card, Col, Dropdown, Flex, List, Modal, Pagination, Row, Skeleton, Tag} from "antd";
 import BookCard from "../component/BookCard";
 import p from "../img/尾随者.jpg"
 import "../css/homepage.css"
@@ -9,7 +9,13 @@ import {book as book} from "../utils/fakeData";
 import React, { useEffect, useState} from "react";
 import {UserContext} from "../component/UserContext";
 import {getRequest} from "../service/common";
-import {getBookById, getBookFilteredByTitle, getBooksPageable, searchAuthorByBookName} from "../service/book";
+import {
+    getBookById,
+    getBookFilteredByTitle,
+    getBooksPageable,
+    searchAuthorByBookName, searchRelatedBooks,
+    searchTagsByTagName
+} from "../service/book";
 import {BACK_END_URL} from "../utils/backend_url";
 import {ArrowLeftOutlined, CheckOutlined, LeftOutlined, RedoOutlined} from "@ant-design/icons";
 
@@ -28,6 +34,36 @@ export default function HomePage(){
     const [searchKeyWord,setSearchKeyWord] = useState("");
     const [isAuthorSearching,setIsAuthorSearching] = useState(false);
     const [authorSearchResult,setAuthorSearchResult] = useState([]);
+    const [isRelateSearching,setIsRelateSearching] = useState(false);
+    const [relateSearchResult,setRelateSearchResult] = useState([]);
+    const [tags,setTags] = useState([]);
+    const dropdownItems = [
+        {
+            key: '1',
+            label: (
+                <a target="_blank" rel="noopener noreferrer" href="https://www.antgroup.com">
+                    1st menu item
+                </a>
+            ),
+        },
+        {
+            key: '2',
+            label: (
+                <a target="_blank" rel="noopener noreferrer" href="https://www.aliyun.com">
+                    2nd menu item
+                </a>
+            ),
+        },
+        {
+            key: '3',
+            label: (
+                <a target="_blank" rel="noopener noreferrer" href="https://www.luohanacademy.com">
+                    3rd menu item
+                </a>
+            ),
+        },
+    ];
+
 
     const getBooks = async (page_index,num)=>{
         let data =await getBooksPageable(pageIndex,element_num);
@@ -71,6 +107,28 @@ export default function HomePage(){
         setAuthorSearchResult(searchResult);
     }
 
+    const showRelateSearchModal = () =>{
+        setIsRelateSearching(true);
+    }
+    const closeRelateSearchModal = () =>{
+        setIsRelateSearching(false);
+        setRelateSearchResult([]);
+    }
+
+    const searchRelate = async (value)=>{
+        let searchResult = await searchRelatedBooks(value);
+
+        setRelateSearchResult(searchResult);
+
+        console.log(searchResult);
+    }
+
+    const searchTags = async (input)=>{
+        const tags = await searchTagsByTagName(input);
+
+        setTags(tags);
+    }
+
     useEffect(()=>{
         if (isFiltering){
             if (searchKeyWord !== ""){
@@ -107,6 +165,7 @@ export default function HomePage(){
                                     doStartFilter(value);
                             }}
                         />
+
                         <Button
                             style={{height:"40px",fontSize:"16px"}}
                             onClick={()=>{
@@ -115,6 +174,16 @@ export default function HomePage(){
                         >
                             查询作者
                         </Button>
+
+                        <Button
+                            style={{height:"40px",fontSize:"16px"}}
+                            onClick={()=>{
+                                showRelateSearchModal();
+                            }}
+                        >
+                            关联查询
+                        </Button>
+
                     </Flex>
                 </Col>
             </Row>
@@ -132,7 +201,7 @@ export default function HomePage(){
                               bookImg={item.cover}
                               bookPrice={item.price}
                               bookName={item.title}
-                              ISBN={item.isbn}
+                              ISBN={item.isbn || item.ISBN}
                               stock={item.stock}
                           ></BookCard>
                       </List.Item>)}
@@ -160,7 +229,7 @@ export default function HomePage(){
             >
                 <Flex justify={"left"}>
                     <Search
-                        placeholder={"作者名称"}
+                        placeholder={"书籍名称"}
                         allowClear
                         enterButton={"查找"}
                         onSearch={(value)=>{
@@ -185,6 +254,65 @@ export default function HomePage(){
                         </Flex>
                     )}/>
             </Modal>
+
+            <Modal
+                open={isRelateSearching}
+                onCancel={()=>{closeRelateSearchModal()}}
+
+                footer={null}
+
+                width={1000}
+                title={"关联查询"}
+            >
+                <Flex justify={"left"}>
+                    <Search
+                        placeholder={"标签名称"}
+                        allowClear
+                        enterButton={"查找标签"}
+                        onSearch={(value)=>{
+                            if (value !=="")
+                                searchTags(value);
+                        }}
+                        size="large"/>
+
+                </Flex>
+
+                <Flex>
+                    {tags.map((tag)=>{
+                        return (
+                            <Tag
+                                color={"blue"}
+                                style={{margin:"5px"}}
+                                onClick={()=>{searchRelate(tag.id)}}
+                            >
+                                {tag.tagName}
+                            </Tag>
+                        )
+                    })}
+                </Flex>
+
+                <List className="booklist"
+                      grid={{column:4,gutter:24,placeItems:"center"}}
+                      dataSource={relateSearchResult}
+                      pagination={{
+                            pageSize:4,
+                            hideOnSinglePage:true
+                      }}
+                      renderItem={(item)=>(
+                          <List.Item>
+                              <BookCard
+                                  bookId={item.id}
+                                  bookImg={item.cover}
+                                  bookPrice={item.price}
+                                  bookName={item.title}
+                                  ISBN={item.isbn}
+                                  stock={item.stock}
+                              />
+                          </List.Item>)}
+                />
+            </Modal>
         </BasicLayout>
     );
 }
+
+

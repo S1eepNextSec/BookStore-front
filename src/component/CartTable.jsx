@@ -20,6 +20,7 @@ import {EditOutlined, FormOutlined, OrderedListOutlined} from "@ant-design/icons
 import {debounce} from "../utils/debounce";
 import {UserContext} from "./UserContext";
 import async from "async";
+import {getBookById, getBookByIds} from "../service/book";
 
 
 /**
@@ -84,7 +85,27 @@ export function CartTable(){
 
     const handleGetCartItems = async ()=>{
         const cartInfo = await getCartItems(userInfo.cart_id);
-        setItems(cartInfo.cartItems);
+        // setItems(cartInfo.cartItems);
+        // setCartId(cartInfo.cart_id);
+
+        // 再发送一次请求获取书籍的封面 & 描述信息
+        const bookIdList = cartInfo.cartItems.map((item)=>item.book_id);
+
+        const bookContents = await getBookByIds(bookIdList);
+
+        // 将book的cover & description信息填充到cartItems中
+        let newItems = cartInfo.cartItems.map((item)=>{
+            const bookContent = bookContents.find((book)=>book.id===item.book_id);
+
+            return {
+                ...item,
+                cover:bookContent.cover,
+                description:bookContent.description
+            }
+        })
+
+        console.log(newItems)
+        setItems(newItems);
         setCartId(cartInfo.cart_id);
     }
 

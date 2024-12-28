@@ -1,6 +1,7 @@
 const base_url = "http://localhost:9000";
 export const BACK_END_URL = {
     GET_BOOK_BY_ID:base_url+"/book/get",
+    GET_BOOK_BY_IDS:base_url+"/book/get/batch",
     GET_BOOK_PAGEABLE:base_url+"/book/get/pageable",
     LOGIN:base_url+"/login",
     AUTHENTICATE:base_url+"/authenticate",
@@ -33,4 +34,7 @@ export const BACK_END_URL = {
     GET_TOP_BOOK_STATISTIC:base_url+"/statistic/top_books",
     GET_TOP_USER_STATISTIC:base_url+"/statistic/user_rank",
     SEARCH_AUTHOR:base_url+"/search/author",
+    SEARCH_TAG:base_url+"/tag/name",
+    SEARCH_RELATE_BOOKS:base_url+"/book/search/tag",
+    GRAPHQL:base_url+"/graphql",
 }
